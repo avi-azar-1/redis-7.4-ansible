@@ -1,0 +1,17 @@
+[Unit]
+Description=Redis 7.4.1
+After=network.target
+
+[Service]
+Type=forking
+Restart=always
+ExecStartPre=/bin/sleep 10
+ExecStart=/usr/local/sbin/redis-server /etc/redis/{{ port }}.conf
+ExecStop=/usr/local/sbin/redis-cli -p {{ port }} -a {{ password }} shutdown
+PIDFile=/var/run/redis_{{ port }}.pid
+StandardOutput=null
+StandardError=null
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

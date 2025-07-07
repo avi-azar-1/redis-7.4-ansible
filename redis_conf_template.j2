@@ -1,0 +1,160 @@
+{% if stack=='yes' %}
+
+#load modules for redis stack capabilities (can be removed if not needed)
+loadmodule /usr/local/lib/redisearch.so
+loadmodule /usr/local/lib/redistimeseries.so
+loadmodule /usr/local/lib/rejson.so
+loadmodule /usr/local/lib/redisbloom.so
+#loadmodule /usr/local/lib/redisgears.so v8-plugin-path /usr/local/lib/libredisgears_v8_plugin.so
+{% endif %}
+
+#specify basic server params
+bind {{ ansible_default_ipv4.address }} 127.0.0.1
+port {{ port }}
+#disables all connection outside localhost when no password configured
+protected-mode yes
+#allows to change configs like dir (persistence files location) online
+#local= only allow to change parameters from the server local connection
+enable-protected-configs local
+#tcp connection queue parameter, relevant only for high connection spikes
+tcp-backlog 511
+#max time for query in millisec,afterwards query will fail or return partial results. 0 = disabled
+timeout 0
+#keepalive in seconds before closing connections
+tcp-keepalive 300
+
+#runs redis in background
+daemonize yes
+#non supervised = allows redis process to start immediatly (without signaling)
+supervised no
+
+pidfile "/var/run/redis_{{ port }}.pid"
+#verbosity notice/verbose/debug
+loglevel notice
+logfile "/var/log/redis/{{ port }}.log"
+#number of databases (seperate namespaces)
+databases 16
+always-show-logo yes
+#maxclients: max connections at once (default 10000)
+
+#how long to wait before shutdown (to allow replica sync)
+shutdown-timeout 10
+#behavior on shutdown (wait for replicas ,save to disk etc)
+shutdown-on-sigint default
+shutdown-on-sigterm default
+
+#maximum memory in redis before error or auto key eviction
+maxmemory {{ memory }}
+#how to behave on maxmemory - noeviction will error, other policies delete by lru/lfu
+maxmemory-policy noeviction
+
+#redis password
+requirepass {{ password }}
+
+#enable/disable rdb - read about it before enabling!
+{% if rdb=='yes' %}
+save 60 0
+{% else %}
+save ""
+{% endif %}
+#block writes if rdb fails! only set if backup essiential
+stop-writes-on-bgsave-error no
+#compress rdb (adds overhead)
+rdbcompression yes
+#verify rdb (adds overhead)
+rdbchecksum yes
+#rdb file name
+dbfilename "dump.rdb"
+#rdb file path
+dir "/redis/data/{{ port }}"
+
+#enable/disable aof - read about it before enabling!
+appendonly {{ appendonly }}
+#aof file name prefix, will create rdb ("snapshot") and aof ("delta") files
+appendfilename "appendonly_{{ port }}.aof"
+#how often to flush writes
+#no=fastests writes least persistent, everysec=default, yes=persistent but very slow
+appendfsync everysec
+#disable aof write if disk is busy, default=no,activate only if latency high
+no-appendfsync-on-rewrite no
+#when to write the aof anew (percent increase from base size)
+auto-aof-rewrite-percentage 100
+#minimum size before rewrite
+auto-aof-rewrite-min-size 64mb
+#load data from aof file which was truncated (due to server fail) and dont error
+aof-load-truncated yes
+#use rdb base file for aof format (deafult yes)
+aof-use-rdb-preamble yes
+
+#replicaof: set redis to be replica of other redis
+#on our redis it is set initially by ansible and later by sentinel
+#on cluster is managed by the cluster itself
+{% if replicaof %}
+replicaof {{ replicaof }} {{ port }}
+{% endif %}
+
+#for replicas - password to connect to master
+masterauth {{ password }}
+#important! will determine behaviour if reading from unsynced replica
+#if set to no unsynced replica will fail all reads
+replica-serve-stale-data yes
+replica-read-only yes
+#performs initial replicatioon without writing/reading rdb to disk
+repl-diskless-sync yes
+repl-diskless-sync-delay 5
+#Disable TCP_NODELAY on the replica socket after SYNC - no = faster sync with more network
+repl-disable-tcp-nodelay no
+#priority rating for sentinal auto master select (prefer higher number)
+replica-priority 100
+#log size for partial sync
+repl-backlog-size 20mb
+
+#set to cluster ready mode
+cluster-enabled {{ cluster }}
+cluster-config-file "/etc/redis/clusters/{{ port }}_cluster.conf"
+#milliseconds before node in failing state
+cluster-node-timeout 5000
+
+#time in ms before longop blocks other clients
+lua-time-limit 5000
+#log operations slower then x microsec
+slowlog-log-slower-than 10000
+#size of slow log (in memory)
+slowlog-max-len 128
+#activate latency monitor (default 0=disabled)
+latency-monitor-threshold 0
+
+#lazy delete -allows deleting large objects in background (non blocking)
+#for intenal redis ops (eviction,ttl)
+lazyfree-lazy-eviction no
+lazyfree-lazy-expire no
+lazyfree-lazy-server-del no
+replica-lazy-flush no
+
+#advanced parameters- only touch if needed for fine tuning
+notify-keyspace-events ""
+hash-max-ziplist-entries 512
+hash-max-ziplist-value 64
+list-max-ziplist-size -2
+list-compress-depth 0
+set-max-intset-entries 512
+zset-max-ziplist-entries 128
+zset-max-ziplist-value 64
+hll-sparse-max-bytes 3000
+stream-node-max-bytes 4096
+stream-node-max-entries 100
+
+#rehash main redis table 1ms every 100ms to free space, keep yes
+activerehashing yes
+#disconnect clients reading data above time threshold
+client-output-buffer-limit normal 0 0 0
+client-output-buffer-limit replica 256mb 64mb 60
+client-output-buffer-limit pubsub 32mb 8mb 60
+#frequency of internal redis command
+hz 10
+#allow raising hz automatically when many clients connected
+dynamic-hz yes
+#allow incremantal sync of aof every 4mb
+aof-rewrite-incremental-fsync yes
+#allow incremantal sync of rdb every 4mb
+rdb-save-incremental-fsync yes

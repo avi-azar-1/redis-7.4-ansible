@@ -1,0 +1,2 @@
+[redis_servers]
+servername ports=[33333] memory=500MB replicaof= cluster=no rdb=no appendonly=no stack=yes password=''
