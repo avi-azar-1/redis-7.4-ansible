@@ -18,7 +18,7 @@ look at instructions in ansible repo
 and run on target server
 
 5. **ready redis install**:  
-unzip this repo in target server
+unzip this repo in target server  
 unzip redis software tarball in target server
 
 4. **edit playbook**:  
