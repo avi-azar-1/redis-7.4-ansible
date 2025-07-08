@@ -19,7 +19,7 @@ and run on target server
 
 5. **ready redis install**:  
 unzip this repo in target server
-put unzipped redis software directory in playbook folder
+unzip redis software tarball in target server
 
 4. **edit playbook**:  
 change target server and parameters inside redis_inventory.yaml
