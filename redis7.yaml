@@ -2,8 +2,8 @@
   hosts: all
   become: true
   vars:
-    redis_software_dir: {{ playbook_dir }}/redis-stack-server-7.4.0-v1
-    ansible_install_dir: {{ playbook_dir }}
+    redis_software_dir: "{{ software_dir }}"
+    ansible_install_dir: "{{ playbook_dir }}"
   tasks:
     - name: check existing redis version 
       shell: 
@@ -151,7 +151,3 @@
       loop: "{{ports}}"
       loop_control:
         loop_var: port
-        
-
-
-
