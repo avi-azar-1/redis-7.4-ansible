@@ -20,6 +20,9 @@ and run on target server
 5. **ready redis install**:  
 unzip this repo in target server  
 unzip redis software tarball in target server
+```bash
+tar -xzf redis-stack-server-7.4.0-v6.rhel8.x86_64.tar.gz
+```
 
 4. **edit playbook**:  
 change target server and parameters inside redis_inventory.yaml
