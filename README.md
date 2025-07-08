@@ -33,8 +33,19 @@ from playbook folder:
 ansible-playbook -i redis_inventory.yaml redis7.yaml
 ```
 for local install (without ssh) run with '-c local' flag  
-for remote ssh create id_rsa.pub in ansible server and copy to known_hosts un target server
+for remote ssh create id_rsa.pub in ansible server and copy to known_hosts un target server  
 
+7. **replication, sentinels or cluster**:  
+   **sentinels**: set up as normal redis then change to sentinel.conf file  
+   **replication**: set replicaof manually than use redis_add_sentinel.sh  
+   **cluster**: use cluster create:  
+```bash
+   ps -ef | grep redis | grep -v grep | grep -v export | awk '{print $9}' | tr '\n' ' '
+```  
+(get node list on each server, combine and run:)  
+```bash
+redis-cli --cluster create -a <password> --cluster-replicas 1 <redis_list>
+```
 
 
 
