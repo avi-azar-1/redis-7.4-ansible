@@ -5,6 +5,7 @@ generic install for redis 7.4.1 instance on rhel 8 servers, including software u
 **HOW TO**
 
 1. downloads:
+   
 download latest redis 7.4 from:
 
 https://github.com/redis-stack/redis-stack/releases/tag/v7.4.0-v6
