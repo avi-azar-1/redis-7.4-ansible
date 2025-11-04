@@ -6,12 +6,12 @@ generic install for redis 7.4.1 instance on rhel 8 servers, including software u
 
 1. **downloads**:  
 - download latest redis 7.4 from:  
-https://github.com/redis-stack/redis-stack/releases/tag/v7.4.0-v6  
+https://github.com/redis-stack/redis-stack/releases
 - also download this repo  
 - also download ansible rhel 8 install from:  
 https://github.com/avi-azar-1/rhel8.8-ansible
 
-2. **install ansibl**e:  
+2. **install ansible**:  
 look at instructions in ansible repo
 
 3. **ready redis install**:  
