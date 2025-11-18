@@ -35,7 +35,7 @@ for remote ssh create id_rsa.pub in ansible server and copy to known_hosts un ta
 
 6. **replication, sentinels or cluster**:  
    **sentinels**: set up as normal redis then change to sentinel.conf file  
-   **replication**: set replicaof manually than use redis_add_sentinel.sh  
+   **replication**: set replicaof during install than use redis_add_sentinel.sh  
    **cluster**: use cluster create:  
 ```bash
    ps -ef | grep redis | grep -v grep | grep -v export | awk '{print $9}' | tr '\n' ' '
