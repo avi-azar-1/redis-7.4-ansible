@@ -1,4 +1,4 @@
-# redis-7.4.6-ansible
+# redis-7.4-ansible
 
 generic install for redis 7.4 instance on rhel 8 servers, including software unpacking and creation of service and conf files
 
