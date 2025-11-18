@@ -1,6 +1,6 @@
-# redis-7.4.1-ansible
+# redis-7.4.6-ansible
 
-generic install for redis 7.4.1 instance on rhel 8 servers, including software unpacking and creation of service and conf files
+generic install for redis 7.4 instance on rhel 8 servers, including software unpacking and creation of service and conf files
 
 **HOW TO**
 
@@ -18,8 +18,9 @@ look at instructions in ansible repo
 unzip this repo in target server  
 unzip redis software tarball in target server
 ```bash
-tar -xzf redis-stack-server-7.4.0-v6.rhel8.x86_64.tar.gz
+tar -xzf redis-stack-server-7.4.0-v8.rhel8.x86_64.tar.gz
 ```
+(replace with the version you downloaded)
 
 4. **edit playbook**:  
 change target server and parameters inside redis_inventory.yaml
